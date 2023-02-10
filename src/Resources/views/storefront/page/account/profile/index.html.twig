@@ -1,0 +1,28 @@
+{% sw_extends '@Storefront/storefront/page/account/profile/index.html.twig' %}
+
+{% block page_account_profile_personal_form %}
+    <form id="profilePersonalForm"
+          method="post"
+          enctype="multipart/form-data"
+          data-form-csrf-handler="true"
+          action="{{ path('frontend.account.profile.save') }}"
+          data-form-validation="true">
+
+        {# @deprecated tag:v6.5.0 - Block page_account_profile_personal_form_csrf will be removed. #}
+        {% block page_account_profile_personal_form_csrf %}
+            {{ parent() }}
+        {% endblock %}
+
+        {% block page_account_profile_personal_fields %}
+            {{ parent() }}
+        {% endblock %}
+
+        {% block page_account_profile_personal_required %}
+            {{ parent() }}
+        {% endblock %}
+
+        {% block page_account_profile_personal_action_buttons %}
+            {{ parent() }}
+        {% endblock %}
+    </form>
+{% endblock %}

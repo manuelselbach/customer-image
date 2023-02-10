@@ -1,0 +1,24 @@
+{% sw_extends '@Storefront/storefront/page/account/index.html.twig' %}
+
+{% block page_account_overview_profile_content %}
+    <div class="manuelselbach-customer-image-profile-avatar__wrapper">
+        {% if context.customer.customFields.avatar is not empty %}
+            {% set avatarId = context.customer.customFields.avatar %}
+            {% set mediaCollection = searchMedia([avatarId], context.context) %}
+
+            {% set avatarMedia = mediaCollection.get(avatarId) %}
+
+
+            {% sw_thumbnails 'avatar-media' with {
+                media: avatarMedia,
+                sizes: {
+                    'default': '200px'
+                },
+                attributes: {
+                    'class': 'manuelselbach-customer-image-profile-avatar'
+                }
+            } %}
+        {% endif %}
+    </div>
+    {{ parent() }}
+{% endblock %}

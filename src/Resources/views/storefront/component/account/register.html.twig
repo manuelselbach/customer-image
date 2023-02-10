@@ -1,0 +1,52 @@
+{% sw_extends '@Storefront/storefront/component/account/register.html.twig' %}
+
+{% block component_account_register_form %}
+    <form action="{{ path('frontend.account.register.save') }}"
+          class="register-form"
+          enctype="multipart/form-data"
+          method="post"
+          data-form-csrf-handler="true"
+          data-form-validation="true">
+
+        {# @deprecated tag:v6.5.0 - Block component_account_register_form_csrf will be removed. #}
+        {% block component_account_register_form_csrf %}
+            {{ parent() }}
+        {% endblock %}
+
+        {% block component_account_register_redirect %}
+            {{ parent() }}
+        {% endblock %}
+
+        {% block component_account_register_create_account %}
+            {{ parent() }}
+        {% endblock %}
+
+        {% block component_account_register_form_action %}
+            {{ parent() }}
+        {% endblock %}
+
+        {% block component_account_register_personal %}
+            {{ parent() }}
+        {% endblock %}
+
+        {% block component_account_register_address %}
+            {{ parent() }}
+        {% endblock %}
+
+        {% block component_account_register_captcha %}
+            {{ parent() }}
+        {% endblock %}
+
+        {% block component_account_register_privacy %}
+            {{ parent() }}
+        {% endblock %}
+
+        {% block component_account_register_required_fields %}
+            {{ parent() }}
+        {% endblock %}
+
+        {% block component_account_register_submit %}
+            {{ parent() }}
+        {% endblock %}
+    </form>
+{% endblock %}

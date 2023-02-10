@@ -1,0 +1,65 @@
+{
+  "name": "manuelselbach/customer-image",
+  "description": "This plugin simply adds an image to a customer profile, which can be maintained by the customer.",
+  "version": "1.0.0",
+  "type": "shopware-platform-plugin",
+  "license": "MIT",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "authors": [
+    {
+      "name": "Manuel Selbach",
+      "email": "manuel_selbach@yahoo.de",
+      "role": "Contributor"
+    }
+  ],
+  "require": {
+    "php": "^7.4||^8.0",
+    "shopware/core": "^6.4.0.0"
+  },
+  "require-dev": {
+    "k10r/codestyle": "^3.0",
+    "phpmd/phpmd": "^2.12",
+    "phpstan/phpstan": "^1.5",
+    "phpstan/phpstan-phpunit": "^1.1",
+    "phpunit/phpunit": "^9.5"
+  },
+  "extra": {
+    "shopware-plugin-class": "ManuelselbachCustomerImage\\ManuelselbachCustomerImage",
+    "copyright": "(c) Manuel Selbach",
+    "label": {
+      "de-DE": "Profilebild für Kunden",
+      "en-GB": "Profile image for customers"
+    },
+    "description": {
+      "de-DE": "Dieses Plugin fügt ein Profilbild für Kunden hinzu, welches durch den Kunden verwaltet werden kann.",
+      "en-GB": "This plugin simply adds an image to a customer profile, which can be maintained by the customer."
+    },
+    "manufacturerLink": {
+      "de-DE": "https://github.com/manuelselbach/customer-image",
+      "en-GB": "https://github.com/manuelselbach/customer-image"
+    },
+    "supportLink": {
+      "de-DE": "https://github.com/manuelselbach/customer-image/issues",
+      "en-GB": "https://github.com/manuelselbach/customer-image/issues"
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "ManuelselbachCustomerImage\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "ManuelselbachCustomerImage\\Test\\": "tests/"
+    }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "scripts": {
+    "phpcs": "vendor/bin/php-cs-fixer fix",
+    "phpmd": "vendor/bin/phpmd src xml phpmd.xml",
+    "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon src"
+  }
+}

@@ -1,0 +1,60 @@
+{% sw_extends '@Storefront/storefront/component/address/address-personal.html.twig' %}
+
+{% block component_address_personal_fields_salutation_title %}
+    <div class="{{ formRowClass }}">
+    {% block component_address_personal_fields_customer_image %}
+        <div class="form-group col-sm-6">
+
+            {% if context.customer.customFields.avatar is not empty %}
+                <div class="manuelselbach-customer-image-profile-avatar__wrapper">
+                    {% set avatarId = context.customer.customFields.avatar %}
+                    {% set mediaCollection = searchMedia([avatarId], context.context) %}
+
+                    {% set avatarMedia = mediaCollection.get(avatarId) %}
+
+                    {% sw_thumbnails 'avatar-media' with {
+                        media: avatarMedia,
+                        sizes: {
+                            'default': '200px'
+                        },
+                        attributes: {
+                            'class': 'manuelselbach-customer-image-profile-avatar'
+                        }
+                    } %}
+                </div>
+            {% endif %}
+
+            {% if formViolations.getViolations("/customer_image") is not empty %}
+                {% set violationPath = "/customer_image" %}
+            {% else %}
+                {% set requiredMessage = "error.VIOLATION::IS_BLANK_ERROR"|trans({ '%field%': "account.personalLastNameLabel"|trans|sw_sanitize }) %}
+            {% endif %}
+
+            {% block component_address_personal_fields_customer_image_label %}
+                <label class="form-label"
+                       for="{{ idPrefix ~ prefix }}personalCustomerImage">
+                    {{ "ManuelselbachCustomerImage.account.customerImageLabel"|trans|sw_sanitize }}
+                </label>
+            {% endblock %}
+
+            {% block component_address_personal_fields_customer_image_input %}
+                <input type="file"
+                       accept=".gif,.jpg,.jpeg,.png"
+                       class="form-control{% if violationPath %} is-invalid{% endif %}"
+                       autocomplete="section-personal customer_image"
+                       id="{{ idPrefix ~ prefix }}personalCustomerImage"
+                       name="{% if prefix %}{{ prefix }}[customer_image]{% else %}customer_image{% endif %}"
+                >
+            {% endblock %}
+
+            {% block component_address_personal_fields_customer_image_input_error %}
+                {% if violationPath %}
+                    {% sw_include '@Storefront/storefront/utilities/form-violation.html.twig' %}
+                {% endif %}
+            {% endblock %}
+        </div>
+    {% endblock %}
+    </div>
+
+    {{ parent() }}
+{% endblock %}
