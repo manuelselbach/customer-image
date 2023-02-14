@@ -21,11 +21,13 @@ use Shopware\Core\Framework\Event\DataMappingEvent;
 use Shopware\Core\Framework\Util\Random;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class CustomerEventSubscriber implements EventSubscriberInterface
 {
-    private const FORM_FIELD_CUSTOMER_IMAGE = 'customer_image';
+    public const FORM_FIELD_CUSTOMER_IMAGE = 'customer_image';
+
     private RequestStack $requestStack;
     private EntityRepository $customerRepository;
     private EntityRepositoryInterface $mediaRepository;
@@ -93,7 +95,7 @@ class CustomerEventSubscriber implements EventSubscriberInterface
         /** @var CustomerEntity $customer */
         $customer = $this->retrieveActiveCustomerById($customerId, $event->getContext());
 
-        if ($customer === null) {
+        if ($customer == null) {
             return;
         }
 
@@ -115,7 +117,7 @@ class CustomerEventSubscriber implements EventSubscriberInterface
         return $this->customerRepository->search($criteria, $context)->first();
     }
 
-    private function uploadFile($context): string
+    private function uploadFile(Context $context): string
     {
         $request = $this->requestStack->getMainRequest();
 
@@ -123,6 +125,7 @@ class CustomerEventSubscriber implements EventSubscriberInterface
             return '';
         }
 
+        /** @var null|UploadedFile $file */
         $file = $request->files->get(static::FORM_FIELD_CUSTOMER_IMAGE);
 
         if ($file === null) {
@@ -146,36 +149,50 @@ class CustomerEventSubscriber implements EventSubscriberInterface
                 'id'            => $mediaId,
                 'name'          => $fileName,
                 'fileName'      => $fileName,
-                'mimeType'      => $file->getClientMimeType(),
-                'fileExtension' => $file->guessExtension(),
+                'mimeType'      => $file->getClientMimeType() ?: '',
+                'fileExtension' => $file->guessExtension() ?: '',
             ],
         ];
 
-        $mediaId = $this->mediaRepository->create($media, Context::createDefaultContext())
-            ->getEvents()
-            ->getElements()[1]
-            ->getIds()[0];
+        $mediaId = $this->createMedia($media);
 
-        if (is_array($mediaId)) {
-            $mediaId = $mediaId['mediaId'];
+        if ($mediaId === '') {
+            return '';
         }
 
         try {
             $this->upload($file, $fileName, $mediaId, $context);
         } catch (Exception $exception) {
-            // TODO: lets see
+            // ignore the error :)
         }
 
         return $mediaId;
     }
 
-    private function upload($file, string $fileName, string $mediaId, $context): void
+    private function createMedia(array $media): string
+    {
+        $mediaEvents = $this->mediaRepository->create($media, Context::createDefaultContext())->getEvents();
+
+        if ($mediaEvents === null) {
+            return '';
+        }
+
+        $mediaId = $mediaEvents->getElements()[1]->getIds()[0]; //@phpstan-ignore-line
+
+        if (is_array($mediaId)) {
+            $mediaId = $mediaId['mediaId'];
+        }
+
+        return $mediaId;
+    }
+
+    private function upload(UploadedFile $file, string $fileName, string $mediaId, Context $context): void
     {
         $this->mediaUpdater->persistFileToMedia(
             new MediaFile(
                 $file->getRealPath(),
-                $file->getMimeType(),
-                $file->guessExtension(),
+                $file->getMimeType() ?: '',
+                $file->guessExtension() ?: '',
                 $file->getSize()
             ),
             $this->fileNameProvider->provide(

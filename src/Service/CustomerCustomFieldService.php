@@ -13,15 +13,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class CustomerCustomFieldService
 {
     public const CUSTOM_FIELD_AVATAR = 'avatar';
-
-    private const ID_CUSTOM_FIELD_SET = 'ce9adee7f8bd4a63930b7c89b9a3fe29';
-    private const ID_GO_2_SKATE_TOKEN = '1b8455779f2147289a840ab6085fa149';
+    public const ID_CUSTOM_FIELD_SET = 'ce9adee7f8bd4a63930b7c89b9a3fe29';
+    public const ID_GO_2_SKATE_TOKEN = '1b8455779f2147289a840ab6085fa149';
 
     protected ContainerInterface $container;
     protected EntityRepositoryInterface $customFieldSetRepository;
 
     public function __construct(
-        $container,
+        ContainerInterface $container,
         EntityRepositoryInterface $customFieldSetRepository
     ) {
         $this->container                = $container;
@@ -30,6 +29,13 @@ class CustomerCustomFieldService
 
     public function addCustomFields(Context $context): void
     {
+        /** @var CustomerDefinition $customerDefinition */
+        $customerDefinition = $this->container->get(CustomerDefinition::class);
+
+        if ($customerDefinition == null) {
+            return;
+        }
+
         $this->customFieldSetRepository->upsert(
             [
                 [
@@ -59,7 +65,7 @@ class CustomerCustomFieldService
                     'relations' => [
                         [
                             'id'         => static::ID_GO_2_SKATE_TOKEN,
-                            'entityName' => $this->container->get(CustomerDefinition::class)->getEntityName(),
+                            'entityName' => $customerDefinition->getEntityName(),
                         ],
                     ],
                 ],
